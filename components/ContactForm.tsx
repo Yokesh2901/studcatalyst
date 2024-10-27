@@ -1,9 +1,9 @@
-"use client"
+"use client";
 import React, { useState, useRef } from "react";
 import emailjs from '@emailjs/browser';
 
 const ContactForm = () => {
-  const formRef = useRef();
+  const formRef = useRef<HTMLFormElement | null>(null);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -11,28 +11,29 @@ const ContactForm = () => {
   });
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
-    emailjs.send(
-      'service_hbp0ixr', // Replace with your service ID
-      'template_eybvgrd', // Replace with your template ID
-      {
-        from_name: form.name,
-        to_name: 'Yokesh',
-        from_email: form.email,
-        to_email: 'yokeshsrinivasan29@gmail.com', // Replace with your email
-        message: form.message,
-      },
-      'ZdjDiDkHfNVpjMF9s' // Replace with your public key
-    )
-    .then(() => {
+    try {
+      await emailjs.send(
+        'service_hbp0ixr', // Replace with your service ID
+        'template_eybvgrd', // Replace with your template ID
+        {
+          from_name: form.name,
+          to_name: 'Yokesh',
+          from_email: form.email,
+          to_email: 'yokeshsrinivasan29@gmail.com', // Replace with your email
+          message: form.message,
+        },
+        'ZdjDiDkHfNVpjMF9s' // Replace with your public key
+      );
+
       setLoading(false);
       alert('Thank you! I will get back to you soon.');
 
@@ -41,11 +42,11 @@ const ContactForm = () => {
         email: '',
         message: '',
       });
-    }, (error: any) => {
+    } catch (error) {
       setLoading(false);
       console.error(error);
       alert('Something went wrong. Please try again.');
-    });
+    }
   };
 
   return (
@@ -75,12 +76,12 @@ const ContactForm = () => {
       </div>
       <div className="mb-3">
         <textarea
-          rows="2" //keep this as a number
+          rows={4} // Keep this as a number
           name="message"
           value={form.message}
           onChange={handleChange}
           placeholder="Your message"
-          className="w-full px-3 py-2 text-sm text-black-200 placeholder-gray-400 bg-white border-0 rounded shadow"
+          className="w-full px-3 py-2 text-sm text-black placeholder-gray-400 bg-white border-0 rounded shadow"
           required
         />
       </div>
